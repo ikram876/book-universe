@@ -1,16 +1,21 @@
 <?php
-// ===== إعدادات الأخطاء =====
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/php-error.log');
-
 session_start();
 
-// ===== مناداة ملف الاتصال =====
+// التحقق من تسجيل الدخول وصلاحية المشرف
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+if (!isset($_SESSION['role']) || trim($_SESSION['role']) !== 'admin') {
+    header("Location: index.php");
+    exit;
+}
+
 require_once 'config.php';
 
-
+$message = '';
+$messageType = '';
 
 // معالجة إضافة الكتاب
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_book'])) {
@@ -54,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_book'])) {
         $message = '❌ ' . implode('<br>', array_map('htmlspecialchars', $errors));
         $messageType = 'error';
     } else {
+        // تم تعديل أسماء الأعمدة لتطابق الجدول الحقيقي
         $stmt = $conn->prepare("INSERT INTO novels (title, category, author, description, text_summary, pages_count, publisher, publish_date, isbn, price, cover_image, buy_link, download_link, read_link, audio_link, rating, reviews_count, author_image, author_bio, quotes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         
         if ($stmt) {
@@ -91,6 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_book'])) {
     <title>إضافة كتاب جديد | Book Universe</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --primary: #009688;
