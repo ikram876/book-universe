@@ -1,3 +1,5 @@
+
+
 <?php
 // ===== إعدادات الأخطاء =====
 error_reporting(E_ALL);
@@ -7,20 +9,10 @@ ini_set('error_log', __DIR__ . '/php-error.log');
 
 session_start();
 
-// ===== الاتصال بقاعدة البيانات عبر ملف الإعدادات =====
-if (!file_exists(__DIR__ . '/config.php')) {
-    die("ملف الإعدادات غير موجود.");
-}
-$config = require __DIR__ . '/config.php';
+// ===== مناداة ملف الاتصال =====
+require_once 'config.php';
 
-$conn = new mysqli($config['DB_HOST'], $config['DB_USER'], $config['DB_PASS'], $config['DB_NAME']);
-if ($conn->connect_error) {
-    error_log('DB connection failed: ' . $conn->connect_error);
-    die("فشل الاتصال بقاعدة البيانات.");
-}
-$conn->set_charset("utf8mb4");
-
-// ✅ إنشاء جدول حالة القراءة
+// (الآن المتغير $conn جاهز للاستخدام)للاستخداماء جدول حالة القراءة
 $conn->query("CREATE TABLE IF NOT EXISTS reading_status (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
