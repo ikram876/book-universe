@@ -1,4 +1,5 @@
 <?php
+// ===== إعدادات الأخطاء =====
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
@@ -6,31 +7,10 @@ ini_set('error_log', __DIR__ . '/php-error.log');
 
 session_start();
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
-}
+// ===== مناداة ملف الاتصال =====
+require_once 'config.php';
 
-if (!isset($_SESSION['role']) || trim($_SESSION['role']) !== 'admin') {
-    header("Location: index.php");
-    exit;
-}
 
-// ===== الاتصال بقاعدة البيانات عبر ملف الإعدادات =====
-if (!file_exists(__DIR__ . '/config.php')) {
-    die('ملف الإعدادات config.php غير موجود.');
-}
-$config = require __DIR__ . '/config.php';
-
-$conn = new mysqli($config['DB_HOST'], $config['DB_USER'], $config['DB_PASS'], $config['DB_NAME']);
-if ($conn->connect_error) {
-    error_log('DB connection failed: ' . $conn->connect_error);
-    die('حدث خطأ في الاتصال بقاعدة البيانات.');
-}
-$conn->set_charset("utf8mb4");
-
-$message = '';
-$messageType = '';
 
 // معالجة إضافة الكتاب
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_book'])) {
