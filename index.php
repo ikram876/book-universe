@@ -6,18 +6,9 @@ ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/php-error.log');
 session_start();
 
-// ===== بيانات الاتصال من متغيرات البيئة (لا تكتبها هنا) =====
-$db_host = getenv('DB_HOST') ?: 'localhost';
-$db_user = getenv('DB_USER') ?: '';
-$db_pass = getenv('DB_PASS') ?: '';
-$db_name = getenv('DB_NAME') ?: '';
+// ===== مناداة ملف الاتصال  =====
+require_once 'config.php';
 
-$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
-if ($conn->connect_error) {
-    error_log('DB connection failed: ' . $conn->connect_error);
-    die('حدث خطأ في الاتصال بقاعدة البيانات.');
-}
-$conn->set_charset("utf8mb4");
 
 // ===== دالة ترجمة التصنيفات =====
 function getCategoryName($cat) {
